@@ -16,7 +16,8 @@
   <ItemGroup>
     <ProjectReference Include="..\RetroGames.Model\RetroGames.Model.csproj" />
     <ProjectReference Include="..\RetroGames.Repository\RetroGames.Repository.csproj" />
-    <ProjectReference Include="..\RetroGames.Service\RetroGames.Service.csproj" />
+    <ProjectReference Include="..\RetroGames.Services\RetroGames.Services.csproj" />
+    <ProjectReference Include="..\RetroGames.WebApi.ApiModels\RetroGames.WebApi.ApiModels.csproj" />
   </ItemGroup>
 
 </Project>
