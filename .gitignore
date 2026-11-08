@@ -1,0 +1,25 @@
+# Credenciais e configuração local
+.env
+.env.*
+!.env.example
+
+# .NET
+[Bb]in/
+[Oo]bj/
+.vs/
+*.user
+*.suo
+*.cache
+
+# Node / Vite
+node_modules/
+dist/
+coverage/
+.vite/
+
+# IDE e sistema
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db
