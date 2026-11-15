@@ -16,7 +16,7 @@ public class GlobalExceptionHandler : IExceptionHandler
     public async ValueTask<bool> TryHandleAsync(
         HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
-        var resposta = new RetroGamesResponseApiModel<object>();
+        var resposta = new RetroGamesResponseApiModel();
 
         if (exception is BusinessRuleException erroNegocio)
         {
