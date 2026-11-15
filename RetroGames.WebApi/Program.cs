@@ -1,32 +1,30 @@
 using DotNetEnv;
-using RetroGames.Repository;
+using RetroGames.WebApi.Configuration;
 
 Env.TraversePath().Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configuração da conexão com o MySQL
-var connectionString = builder.Configuration.GetConnectionString("Default")
-    ?? throw new InvalidOperationException("String de conexão não configurada.");
+var connectionString = builder.Configuration.GetConnectionString("Default");
+if (string.IsNullOrWhiteSpace(connectionString))
+    throw new InvalidOperationException("String de conexão não configurada. Confira ConnectionStrings__Default no arquivo .env.");
 
-builder.Services.AddScoped(_ => new DatabaseConnection(connectionString));
-
-// Configuração dos serviços da API
+builder.Services.AddRepositorios(connectionString);
+builder.Services.AddServicosDeNegocio();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// Configuração da aplicação
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/openapi/v1.json", "RetroGames API");
+        options.RoutePrefix = "swagger";
+    });
 }
 
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
