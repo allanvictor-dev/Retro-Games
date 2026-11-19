@@ -77,7 +77,6 @@ public class JogoService : IJogoService
                    transactionOptions, TransactionScopeAsyncFlowOption.Enabled))
         {
             var existente = await BuscarJogoAsync(jogo.Id);
-            jogo.Ativo = existente.Ativo;
             jogo.DataCadastro = existente.DataCadastro;
             await ValidarReferenciasAsync(jogo, idsGeneros);
 
