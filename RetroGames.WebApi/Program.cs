@@ -17,6 +17,7 @@ if (string.IsNullOrWhiteSpace(connectionString))
 
 builder.Services.AddRepositorios(connectionString);
 builder.Services.AddServicosDeNegocio();
+builder.Services.AddAutenticacao();
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddControllers(opcoes => opcoes.Filters.Add<FluentValidationFilter>())
     .ConfigureApiBehaviorOptions(opcoes =>
@@ -52,6 +53,9 @@ if (app.Environment.IsDevelopment())
         options.RoutePrefix = "swagger";
     });
 }
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 app.Run();
