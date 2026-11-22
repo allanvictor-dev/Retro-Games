@@ -6,7 +6,7 @@ public interface IJogoService
 {
     Task<(List<JogoDetalheServiceModel> Jogos, int Total)> ListarAsync(
         int pagina = 1, int tamanhoPagina = 5, string? nome = null,
-        int? idPlataforma = null, int? idGenero = null);
+        int? idPlataforma = null, int? idGenero = null, bool incluirInativos = false);
 
     Task<JogoDetalheServiceModel> BuscarPorIdAsync(int id);
     Task<Jogo> InserirAsync(Jogo jogo, List<int> idsGeneros);

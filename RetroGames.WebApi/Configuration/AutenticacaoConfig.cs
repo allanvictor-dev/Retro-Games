@@ -26,7 +26,6 @@ public static class AutenticacaoConfig
                         ResponseCodes.ACESSO_NEGADO);
             });
 
-        services.AddAuthorization();
         return services;
     }
 

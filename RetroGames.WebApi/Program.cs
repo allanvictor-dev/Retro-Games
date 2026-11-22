@@ -18,6 +18,9 @@ if (string.IsNullOrWhiteSpace(connectionString))
 builder.Services.AddRepositorios(connectionString);
 builder.Services.AddServicosDeNegocio();
 builder.Services.AddAutenticacao();
+builder.Services.AddAutorizacao();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IUsuarioAtualService, RetroGames.WebApi.Services.UsuarioAtualService>();
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddControllers(opcoes => opcoes.Filters.Add<FluentValidationFilter>())
     .ConfigureApiBehaviorOptions(opcoes =>
@@ -46,7 +49,7 @@ app.UseExceptionHandler();
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.MapOpenApi().AllowAnonymous();
     app.UseSwaggerUI(options =>
     {
         options.SwaggerEndpoint("/openapi/v1.json", "RetroGames API");

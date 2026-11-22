@@ -2,6 +2,7 @@ namespace RetroGames.WebApi.ApiModels;
 
 public class ListarJogoRequestApiModel
 {
+    public bool IncluirInativos { get; set; }
     public string? Busca { get; set; }
     public int? IdPlataforma { get; set; }
     public int? IdGenero { get; set; }

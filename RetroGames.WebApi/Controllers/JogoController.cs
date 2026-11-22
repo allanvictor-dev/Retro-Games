@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using RetroGames.WebApi.Configuration;
 using RetroGames.Services;
 using RetroGames.WebApi.ApiModels;
 using RetroGames.WebApi.Mappers;
@@ -16,13 +18,15 @@ public class JogoController : ControllerBase
         _service = service;
     }
 
+    [AllowAnonymous]
     [HttpGet]
     public async Task<ActionResult<RetroGamesResponseApiModel<PaginaResponseApiModel<ListarJogoResponseApiModel>>>> Listar(
         [FromQuery] ListarJogoRequestApiModel request)
     {
         var filtro = request.ParaFiltro();
         var (jogos, total) = await _service.ListarAsync(
-            filtro.Pagina, filtro.TamanhoPagina, filtro.Nome, filtro.IdPlataforma, filtro.IdGenero);
+            filtro.Pagina, filtro.TamanhoPagina, filtro.Nome, filtro.IdPlataforma, filtro.IdGenero,
+            filtro.IncluirInativos);
 
         return Ok(new RetroGamesResponseApiModel<PaginaResponseApiModel<ListarJogoResponseApiModel>>
         {
@@ -38,6 +42,7 @@ public class JogoController : ControllerBase
         });
     }
 
+    [AllowAnonymous]
     [HttpGet("{id:int}")]
     public async Task<ActionResult<RetroGamesResponseApiModel<ListarPorIdJogoResponseApiModel>>> ListarPorId(int id)
     {
@@ -49,6 +54,7 @@ public class JogoController : ControllerBase
         });
     }
 
+    [Authorize(Policy = Politicas.Administrador)]
     [HttpPost]
     public async Task<ActionResult<RetroGamesResponseApiModel<ListarPorIdJogoResponseApiModel>>> Inserir(
         [FromBody] InserirJogoRequestApiModel request)
@@ -63,6 +69,7 @@ public class JogoController : ControllerBase
         return CreatedAtAction(nameof(ListarPorId), new { id = criado.Id }, envelope);
     }
 
+    [Authorize(Policy = Politicas.Administrador)]
     [HttpPut("{id:int}")]
     public async Task<ActionResult<RetroGamesResponseApiModel>> Alterar(int id,
         [FromBody] AlterarJogoRequestApiModel request)
@@ -71,6 +78,7 @@ public class JogoController : ControllerBase
         return Ok(new RetroGamesResponseApiModel { ResponseCode = ResponseCodes.SUCESSO });
     }
 
+    [Authorize(Policy = Politicas.Administrador)]
     [HttpDelete("{id:int}")]
     public async Task<ActionResult<RetroGamesResponseApiModel>> Excluir(int id)
     {
