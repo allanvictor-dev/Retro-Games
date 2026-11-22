@@ -12,6 +12,8 @@ public class RepositorySet : IRepositorySet
 
     public ICondicaoJogoRepository CondicaoJogo { get; }
 
+    public IUsuarioRepository Usuario { get; }
+
     public RepositorySet(RepositoryConfig config)
     {
         Plataforma = new PlataformaRepository(config);
@@ -19,5 +21,6 @@ public class RepositorySet : IRepositorySet
         JogoGenero = new JogoGeneroRepository(config);
         Genero = new GeneroRepository(config);
         CondicaoJogo = new CondicaoJogoRepository(config);
+        Usuario = new UsuarioRepository(config);
     }
 }

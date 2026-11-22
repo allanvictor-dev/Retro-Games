@@ -1,3 +1,4 @@
+using RetroGames.Services;
 using DotNetEnv;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
@@ -32,6 +33,13 @@ builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
 var app = builder.Build();
+
+using (var escopo = app.Services.CreateScope())
+{
+    var autenticacao = escopo.ServiceProvider.GetRequiredService<IAutenticacaoService>();
+    await autenticacao.GarantirAdministradorInicialAsync(
+        app.Configuration["AdminInicial:Email"], app.Configuration["AdminInicial:Senha"]);
+}
 
 app.UseExceptionHandler();
 
