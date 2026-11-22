@@ -1,0 +1,7 @@
+export function obterMensagemErro(erro) {
+  if (!erro.response) {
+    return 'Não foi possível conectar ao servidor.'
+  }
+
+  return erro.response.data?.errorMessage || 'Não foi possível concluir a operação.'
+}
