@@ -1,5 +1,21 @@
 import api from './api.js'
 
+export const autenticacaoApi = {
+  async entrar(email, senha) {
+    const resposta = await api.post('/Autenticacao/login', { email, senha })
+    return resposta.data.data
+  },
+
+  async sair() {
+    await api.post('/Autenticacao/logout')
+  },
+
+  async usuarioAtual() {
+    const resposta = await api.get('/Autenticacao/eu')
+    return resposta.data.data
+  },
+}
+
 export const jogoApi = {
   async listar(filtros = {}) {
     const resposta = await api.get('/Jogo', { params: filtros })
