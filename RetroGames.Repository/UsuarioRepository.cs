@@ -58,6 +58,37 @@ public class UsuarioRepository : RepositoryBase, IUsuarioRepository
         return await leitor.ReadAsync() ? LerUsuario(leitor) : null;
     }
 
+    public async Task<List<Usuario>> ListarPorIdsAsync(List<int> ids)
+    {
+        var usuarios = new List<Usuario>();
+
+        if (ids.Count == 0)
+            return usuarios;
+
+        var nomesParametros = ids.Select((_, i) => $"@id{i}");
+
+        string sql = $"""
+            SELECT co_seq_usuario, no_usuario, ds_email, ds_senha_hash,
+                   st_ativo, dt_cadastro, co_perfil
+            FROM tb_usuario
+            WHERE co_seq_usuario IN ({string.Join(", ", nomesParametros)})
+            ORDER BY co_seq_usuario
+            """;
+
+        await using var conexao = await AbrirConexaoAsync();
+        await using var comando = CriarComando(conexao, sql);
+
+        for (int i = 0; i < ids.Count; i++)
+            AdicionarParametro(comando, $"@id{i}", ids[i]);
+
+        await using var leitor = await comando.ExecuteReaderAsync();
+
+        while (await leitor.ReadAsync())
+            usuarios.Add(LerUsuario(leitor));
+
+        return usuarios;
+    }
+
     public async Task<bool> ExisteAdministradorAsync()
     {
         const string sql = """

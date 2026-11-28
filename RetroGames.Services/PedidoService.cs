@@ -94,4 +94,66 @@ public class PedidoService : IPedidoService
             Itens = itensDetalhados
         };
     }
+
+    public async Task<List<PedidoDetalheServiceModel>> ListarTodosAsync(int? idSituacaoPedido = null)
+    {
+        var pedidos = await _repositorio.Pedido.ListarTodosAsync(idSituacaoPedido);
+        return await MontarDetalhesAsync(pedidos);
+    }
+
+    public async Task AlterarSituacaoAsync(int idPedido, int idSituacaoPedido)
+    {
+        var pedido = await _repositorio.Pedido.BuscarPorIdAsync(idPedido);
+        if (pedido == null)
+            throw new BusinessRuleException(BusinessErrors.PedidoNaoEncontrado);
+
+        var situacao = await _repositorio.SituacaoPedido.BuscarPorIdAsync(idSituacaoPedido);
+        if (situacao == null)
+            throw new BusinessRuleException(BusinessErrors.SituacaoNaoEncontrada);
+
+        await _repositorio.Pedido.AtualizarSituacaoAsync(idPedido, idSituacaoPedido);
+    }
+
+    private async Task<List<PedidoDetalheServiceModel>> MontarDetalhesAsync(List<Pedido> pedidos)
+    {
+        if (pedidos.Count == 0)
+            return new List<PedidoDetalheServiceModel>();
+
+        var situacoes = await _repositorio.SituacaoPedido.ListarAsync();
+        var usuarios = await _repositorio.Usuario.ListarPorIdsAsync(
+            pedidos.Select(p => p.IdUsuario).Distinct().ToList());
+        var itens = await _repositorio.ItemPedido.ListarPorPedidosAsync(
+            pedidos.Select(p => p.Id).ToList());
+        var jogos = await _repositorio.Jogo.ListarPorIdsAsync(
+            itens.Select(i => i.IdJogo).Distinct().ToList());
+
+        var situacoesPorId = situacoes.ToDictionary(s => s.Id);
+        var usuariosPorId = usuarios.ToDictionary(u => u.Id);
+        var jogosPorId = jogos.ToDictionary(j => j.Id);
+
+        return pedidos.Select(pedido =>
+        {
+            usuariosPorId.TryGetValue(pedido.IdUsuario, out var usuario);
+            situacoesPorId.TryGetValue(pedido.IdSituacaoPedido, out var situacao);
+
+            var itensPedido = (from item in itens
+                               where item.IdPedido == pedido.Id
+                               select new ItemPedidoDetalheServiceModel
+                               {
+                                   Item = item,
+                                   NomeJogo = jogosPorId.TryGetValue(item.IdJogo, out var jogo)
+                                       ? jogo.Nome
+                                       : string.Empty
+                               }).ToList();
+
+            return new PedidoDetalheServiceModel
+            {
+                Pedido = pedido,
+                DescricaoSituacao = situacao?.Descricao ?? string.Empty,
+                NomeUsuario = usuario?.Nome ?? string.Empty,
+                EmailUsuario = usuario?.Email ?? string.Empty,
+                Itens = itensPedido
+            };
+        }).ToList();
+    }
 }
