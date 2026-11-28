@@ -6,5 +6,9 @@ public interface IPedidoService
 
     Task<List<PedidoDetalheServiceModel>> ListarTodosAsync(int? idSituacaoPedido = null);
 
+    Task<List<PedidoDetalheServiceModel>> ListarMeusAsync();
+
+    Task<PedidoDetalheServiceModel> BuscarPorIdAsync(int id);
+
     Task AlterarSituacaoAsync(int idPedido, int idSituacaoPedido);
 }

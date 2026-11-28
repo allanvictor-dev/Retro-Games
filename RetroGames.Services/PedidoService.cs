@@ -101,6 +101,26 @@ public class PedidoService : IPedidoService
         return await MontarDetalhesAsync(pedidos);
     }
 
+    public async Task<List<PedidoDetalheServiceModel>> ListarMeusAsync()
+    {
+        var idUsuario = _usuarioAtual.IdUsuario
+            ?? throw new InvalidOperationException("Usuário autenticado não encontrado na sessão.");
+        var pedidos = await _repositorio.Pedido.ListarPorUsuarioAsync(idUsuario);
+        return await MontarDetalhesAsync(pedidos);
+    }
+
+    public async Task<PedidoDetalheServiceModel> BuscarPorIdAsync(int id)
+    {
+        var pedido = await _repositorio.Pedido.BuscarPorIdAsync(id)
+            ?? throw new BusinessRuleException(BusinessErrors.PedidoNaoEncontrado);
+
+        if (pedido.IdUsuario != _usuarioAtual.IdUsuario && !_usuarioAtual.EhAdministrador)
+            throw new BusinessRuleException(BusinessErrors.PedidoDeOutroUsuario);
+
+        var detalhes = await MontarDetalhesAsync([pedido]);
+        return detalhes.Single();
+    }
+
     public async Task AlterarSituacaoAsync(int idPedido, int idSituacaoPedido)
     {
         var pedido = await _repositorio.Pedido.BuscarPorIdAsync(idPedido);
