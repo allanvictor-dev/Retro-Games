@@ -1,4 +1,5 @@
 import { Route, Routes } from 'react-router-dom'
+import Plataformas from './pages/Admin/Plataformas.jsx'
 import RotaProtegida from './components/RotaProtegida.jsx'
 import Layout from './components/Layout.jsx'
 import Catalogo from './pages/Catalogo/Catalogo.jsx'
@@ -15,7 +16,7 @@ export default function App() {
         <Route path="login" element={<Login />} />
         <Route element={<RotaProtegida />}>
           <Route path="admin/jogos" element={<h1>Gerenciamento de jogos</h1>} />
-          <Route path="admin/plataformas" element={<h1>Gerenciamento de plataformas</h1>} />
+          <Route path="admin/plataformas" element={<Plataformas />} />
         </Route>
         <Route path="*" element={<NaoEncontrada />} />
       </Route>
