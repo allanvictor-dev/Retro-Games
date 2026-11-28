@@ -125,4 +125,17 @@ public class PedidoServiceTests
         _pedidos.Verify(r => r.AtualizarSituacaoAsync(20, SituacaoPedidoIds.Pago), Times.Once);
         _pedidos.VerifyNoOtherCalls();
     }
+
+    [Fact]
+    public async Task AlterarSituacaoAsync_PedidoInexistente_LancaPedidoNaoEncontrado()
+    {
+        _pedidos.Setup(r => r.BuscarPorIdAsync(99)).ReturnsAsync((Pedido?)null);
+
+        var erro = await Assert.ThrowsAsync<BusinessRuleException>(() =>
+            _servico.AlterarSituacaoAsync(99, SituacaoPedidoIds.Pago));
+
+        Assert.Equal(BusinessErrors.PedidoNaoEncontrado, erro.Erro);
+        _pedidos.Verify(r => r.BuscarPorIdAsync(99), Times.Once);
+        _pedidos.Verify(r => r.AtualizarSituacaoAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+    }
 }
