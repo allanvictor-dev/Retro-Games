@@ -38,6 +38,17 @@ public class AutenticacaoController : ControllerBase
         return Ok(MontarResposta(principal));
     }
 
+    [AllowAnonymous]
+    [HttpPost("cadastrar")]
+    public async Task<ActionResult<RetroGamesResponseApiModel<UsuarioLogadoResponseApiModel>>> Cadastrar(
+        [FromBody] CadastrarUsuarioRequestApiModel request)
+    {
+        var usuario = await _service.CadastrarAsync(request.Nome, request.Email, request.Senha);
+        var principal = usuario.ParaClaimsPrincipal();
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+        return CreatedAtAction(nameof(Eu), MontarResposta(principal));
+    }
+
     [Authorize]
     [HttpPost("logout")]
     public async Task<ActionResult<RetroGamesResponseApiModel>> Logout()
