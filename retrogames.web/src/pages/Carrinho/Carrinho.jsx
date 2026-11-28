@@ -30,7 +30,7 @@ export default function Carrinho() {
       limpar()
       navigate('/meus-pedidos/' + pedido.id, {
         replace: true,
-        state: { pedidoCriado: pedido, idUsuario: usuario.id },
+        state: { compraRealizada: true, idUsuario: usuario.id },
       })
     } catch (erroCompra) {
       const codigo = erroCompra.response?.data?.responseCode

@@ -92,6 +92,14 @@ export const situacaoPedidoApi = {
 }
 
 export const pedidoApi = {
+  async listarMeus() {
+    const resposta = await api.get('/Pedido/meus')
+    return resposta.data.data
+  },
+  async buscarPorId(id) {
+    const resposta = await api.get('/Pedido/' + encodeURIComponent(id))
+    return resposta.data.data
+  },
   async inserir(itens) {
     const resposta = await api.post('/Pedido', { itens })
     return resposta.data.data
