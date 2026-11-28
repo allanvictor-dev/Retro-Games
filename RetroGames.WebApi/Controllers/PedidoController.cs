@@ -32,6 +32,30 @@ public class PedidoController : ControllerBase
     }
 
     [Authorize]
+    [HttpGet("meus")]
+    public async Task<ActionResult<RetroGamesResponseApiModel<List<ListarPedidoResponseApiModel>>>> ListarMeus()
+    {
+        var pedidos = await _service.ListarMeusAsync();
+        return Ok(new RetroGamesResponseApiModel<List<ListarPedidoResponseApiModel>>
+        {
+            ResponseCode = ResponseCodes.SUCESSO,
+            Data = pedidos.Select(p => p.ParaListarResponse()).ToList()
+        });
+    }
+
+    [Authorize]
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<RetroGamesResponseApiModel<ListarPedidoResponseApiModel>>> BuscarPorId(int id)
+    {
+        var pedido = await _service.BuscarPorIdAsync(id);
+        return Ok(new RetroGamesResponseApiModel<ListarPedidoResponseApiModel>
+        {
+            ResponseCode = ResponseCodes.SUCESSO,
+            Data = pedido.ParaListarResponse()
+        });
+    }
+
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult<RetroGamesResponseApiModel<InserirPedidoResponseApiModel>>> Inserir(
         [FromBody] InserirPedidoRequestApiModel request)
