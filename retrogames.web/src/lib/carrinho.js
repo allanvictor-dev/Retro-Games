@@ -1,8 +1,9 @@
 export const QUANTIDADE_MAXIMA = 10
 
-export function carregarItens() {
+export function carregarItens(chave) {
+  if (!chave) return []
   try {
-    const dados = JSON.parse(localStorage.getItem('retrogames.carrinho') || '[]')
+    const dados = JSON.parse(localStorage.getItem(chave) || '[]')
     if (!Array.isArray(dados)) return []
 
     return dados.filter((item, indice) =>
