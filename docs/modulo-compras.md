@@ -67,3 +67,32 @@ A API retorna `responseCode` e `errorMessage`. Respostas com conteúdo incluem `
 
 Catálogos de referência: [BusinessErrors](../RetroGames.Services/BusinessErrors.cs) e [ResponseCodes](../RetroGames.WebApi.ApiModels/ResponseCodes.cs).
 
+
+## 6. Validação pelo Swagger UI
+
+Em 28/11/2026, o cliente do Swagger UI executou 30 chamadas HTTP contra a API da revisão `84b2895`, com MySQL 8.0 isolado e scripts 001–015. As verificações compararam o status HTTP, o código no JSON e a presença de mensagem em cada erro. A sequência abaixo pode ser reproduzida em `/swagger`, em ambiente de desenvolvimento, com um banco de teste.
+
+| Sequência | Resultado observado |
+| --- | --- |
+| Consultar meus pedidos sem sessão. Cadastrar o cliente A e repetir seu e-mail. Tentar listar todos os pedidos como A. | 401/4, 201/0, 409/106 e 403/5, respectivamente. |
+| Como A, enviar carrinho vazio, jogo inexistente e quantidade acima do estoque. Comprar uma unidade disponível. | 400/3, 400/110, 409/111 e 201/0. |
+| Consultar a lista e o detalhe de A, depois um ID inexistente. Cadastrar B, listar seus pedidos e tentar abrir o pedido de A. | A recebeu o próprio pedido com total e preço pago corretos. ID inexistente retornou 404/109. B recebeu lista vazia e 403/113 no detalhe de A. |
+| Entrar como administrador, abrir o detalhe de A, listar situações, tentar uma situação inexistente e alterar para Pago. Filtrar a listagem por Pago. | Detalhe e situações retornaram 200/0. A situação inexistente retornou 404/112. A alteração retornou 200/0 e o pedido apareceu no filtro como Pago. |
+| Listar gêneros, criar um nome, repeti-lo, buscar e renomear. Excluir um gênero vinculado e depois o gênero de teste. Consultar o excluído. | 200/0, 201/0, 409/107, 200/0, 200/0, 409/108, 200/0 e 404/105, respectivamente. |
+
+As chamadas de apoio consultaram jogos disponíveis, autenticaram o administrador e encerraram sua sessão. Os dados e as credenciais da execução eram temporários.
+
+## 7. Rastreabilidade
+
+### 7.1 Matriz do Módulo de Compras
+
+| Requisito | Entrega | Evidência |
+| --- | --- | --- |
+| C01 — Cadastro de cliente | Cadastro autenticado por cookie, perfil Cliente e e-mail único | AutenticacaoController e AutenticacaoService. Swagger 201/0 e 409/106. |
+| C02 — Menu por perfil | O backend fornece a identidade e o perfil em `/api/Autenticacao/eu`. O menu responsivo tem acompanhamento próprio no frontend. | AutenticacaoController e [task de interface #21](https://github.com/allanvictor-dev/Retro-Games/issues/21). |
+| C03 — Carrinho | A API recebe os itens na finalização. A persistência do carrinho no navegador pertence ao frontend. | InserirPedidoRequestValidator e [task de carrinho #25](https://github.com/allanvictor-dev/Retro-Games/issues/25). |
+| C04 — Finalizar compra | Pedido, itens, preço pago e baixa de estoque em transação | PedidoService.InserirAsync. Swagger 201/0, 400/110 e 409/111. |
+| C05 — Meus pedidos | Listagem exclusiva da sessão em ordem cronológica inversa | PedidoRepository.ListarPorUsuarioAsync e PedidoService.ListarMeusAsync. Swagger com dois clientes. |
+| C06 — Detalhe | Consulta pelo dono ou administrador | PedidoService.BuscarPorIdAsync. Swagger 200/0, 404/109 e 403/113. |
+| C07 — Gestão de pedidos | Listagem administrativa, filtro e alteração da situação | PedidoController e SituacaoPedidoController. Swagger 403/5, 404/112 e 200/0. |
+| C08 — Gestão de gêneros | Cadastro, consulta, alteração e exclusão condicionada aos vínculos | GeneroController e GeneroService. Swagger 404/105, 409/107 e 409/108. |
