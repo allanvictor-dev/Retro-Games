@@ -32,6 +32,7 @@ export default function Layout() {
                   <NavLink className="nav-link" to="/admin/jogos">Administração</NavLink>
                   <NavLink className="nav-link" to="/admin/plataformas">Plataformas</NavLink>
                   <NavLink className="nav-link" to="/admin/generos">Gêneros</NavLink>
+                  <NavLink className="nav-link" to="/admin/pedidos">Pedidos</NavLink>
                 </>
               )}
             </div>
