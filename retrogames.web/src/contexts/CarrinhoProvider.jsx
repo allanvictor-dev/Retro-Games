@@ -37,11 +37,21 @@ function CarrinhoDaConta({ children, chave }) {
     setItens(anteriores => removerItem(anteriores, idJogo))
   }
 
+  function limpar() {
+    if (!chave) return
+    setItens([])
+    try {
+      localStorage.setItem(chave, '[]')
+    } catch (erro) {
+      console.error('Não foi possível limpar o carrinho salvo.', erro)
+    }
+  }
+
   const valorTotal = itens.reduce((total, item) => total + Math.round(item.preco * 100) * item.quantidade, 0) / 100
   const quantidadeTotal = itens.reduce((total, item) => total + item.quantidade, 0)
 
   return (
-    <carrinhoContext.Provider value={{ itens, adicionar, alterarQuantidade, remover, quantidadeTotal, valorTotal }}>
+    <carrinhoContext.Provider value={{ itens, adicionar, alterarQuantidade, remover, limpar, quantidadeTotal, valorTotal }}>
       {children}
     </carrinhoContext.Provider>
   )

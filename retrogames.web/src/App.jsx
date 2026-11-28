@@ -1,4 +1,5 @@
 import { Route, Routes } from 'react-router-dom'
+import ConfirmacaoCompra from './pages/Pedidos/ConfirmacaoCompra.jsx'
 import Carrinho from './pages/Carrinho/Carrinho.jsx'
 import FormularioJogo from './pages/Admin/FormularioJogo.jsx'
 import Generos from './pages/Admin/Generos.jsx'
@@ -24,6 +25,7 @@ export default function App() {
 
         <Route element={<RotaProtegida somenteAdministrador={false} />}>
           <Route path="carrinho" element={<Carrinho />} />
+          <Route path="meus-pedidos/:id" element={<ConfirmacaoCompra />} />
         </Route>
 
         <Route element={<RotaProtegida />}>

@@ -92,6 +92,10 @@ export const situacaoPedidoApi = {
 }
 
 export const pedidoApi = {
+  async inserir(itens) {
+    const resposta = await api.post('/Pedido', { itens })
+    return resposta.data.data
+  },
   async listar(idSituacao) {
     const params = idSituacao ? { idSituacao } : {}
     const resposta = await api.get('/Pedido', { params })
