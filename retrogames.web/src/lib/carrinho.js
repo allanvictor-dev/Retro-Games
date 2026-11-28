@@ -38,3 +38,17 @@ export function adicionarItem(itens, jogo) {
     quantidade: 1,
   }]
 }
+
+export function alterarQuantidadeItem(itens, idJogo, quantidade) {
+  if (!Number.isInteger(quantidade) || quantidade < 1 || quantidade > QUANTIDADE_MAXIMA) {
+    return itens
+  }
+
+  return itens.map(item => item.idJogo === idJogo
+    ? { ...item, quantidade }
+    : item)
+}
+
+export function removerItem(itens, idJogo) {
+  return itens.filter(item => item.idJogo !== idJogo)
+}

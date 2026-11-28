@@ -30,7 +30,7 @@ export default function Layout() {
           <div className="collapse navbar-collapse" id="menuPrincipal">
             <div className="navbar-nav">
               <NavLink className="nav-link" to="/">Catálogo</NavLink>
-              <span className="navbar-text" aria-live="polite">Carrinho ({quantidadeTotal})</span>
+              <NavLink className="nav-link" to="/carrinho">Carrinho (<span aria-live="polite">{quantidadeTotal}</span>)</NavLink>
               {ehAdministrador && (
                 <>
                   <NavLink className="nav-link" to="/admin/jogos">Administração</NavLink>

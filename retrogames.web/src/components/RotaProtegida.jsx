@@ -2,7 +2,7 @@ import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useAutenticacao } from '../hooks/useAutenticacao.js'
 import { Carregando } from './MensagensEstado.jsx'
 
-export default function RotaProtegida() {
+export default function RotaProtegida({ somenteAdministrador = true }) {
   const { carregando, estaAutenticado, ehAdministrador } = useAutenticacao()
   const location = useLocation()
 
@@ -10,7 +10,7 @@ export default function RotaProtegida() {
   if (!estaAutenticado) {
     return <Navigate to="/login" state={{ de: location.pathname + location.search + location.hash }} replace />
   }
-  if (!ehAdministrador) {
+  if (somenteAdministrador && !ehAdministrador) {
     return <div className="alert alert-danger" role="alert">Acesso restrito a administradores.</div>
   }
 
