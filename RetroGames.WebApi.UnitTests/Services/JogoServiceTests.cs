@@ -66,4 +66,86 @@ public class JogoServiceTests
         Assert.Equal(103, erro.Erro.Codigo);
         _jogos.Verify(r => r.DesativarAsync(It.IsAny<int>()), Times.Never);
     }
+
+    [Fact]
+    public async Task ListarAsync_ComGenero_EnviaSomenteIdsDistintosDoGenero()
+    {
+        ConfigurarDetalhesVazios();
+        _vinculos.Setup(r => r.ListarTodosAsync()).ReturnsAsync([
+            new() { IdJogo = 12, IdGenero = 3 },
+            new() { IdJogo = 15, IdGenero = 4 },
+            new() { IdJogo = 12, IdGenero = 3 },
+            new() { IdJogo = 18, IdGenero = 3 }
+        ]);
+        _jogos.Setup(r => r.ListarAsync(1, 5, null, null,
+            It.Is<List<int>?>(ids => ids != null && ids.Order().SequenceEqual(new[] { 12, 18 })), false))
+            .ReturnsAsync((new List<Jogo>(), 0)).Verifiable();
+
+        await _servico.ListarAsync(idGenero: 3);
+
+        _jogos.Verify();
+    }
+
+    [Fact]
+    public async Task ListarAsync_SemGenero_EnviaIdsNulos()
+    {
+        ConfigurarDetalhesVazios();
+        _jogos.Setup(r => r.ListarAsync(1, 5, null, null, null, false))
+            .ReturnsAsync((new List<Jogo>(), 0)).Verifiable();
+
+        await _servico.ListarAsync();
+
+        _jogos.Verify();
+        _vinculos.Verify(r => r.ListarTodosAsync(), Times.Never);
+    }
+
+    private void ConfigurarDetalhesVazios()
+    {
+        _plataformas.Setup(r => r.ListarAsync()).ReturnsAsync([]);
+        _condicoes.Setup(r => r.ListarAsync()).ReturnsAsync([]);
+        _generos.Setup(r => r.ListarAsync()).ReturnsAsync([]);
+        _vinculos.Setup(r => r.ListarPorJogosAsync(It.IsAny<List<int>>())).ReturnsAsync([]);
+    }
+
+    [Fact]
+    public async Task ListarAsync_PaginaComDoisJogos_MontaDetalhesEPreservaTotal()
+    {
+        List<Jogo> pagina = [
+            new() { Id = 11, IdPlataforma = 2, IdCondicaoJogo = 7 },
+            new() { Id = 10, IdPlataforma = 1, IdCondicaoJogo = 8 }
+        ];
+        _jogos.Setup(r => r.ListarAsync(2, 2, null, null, null, false)).ReturnsAsync((pagina, 9));
+        _plataformas.Setup(r => r.ListarAsync()).ReturnsAsync([
+            new() { Id = 1, Nome = "Mega Drive" }, new() { Id = 2, Nome = "SNES" }
+        ]);
+        _condicoes.Setup(r => r.ListarAsync()).ReturnsAsync([
+            new() { Id = 8, Descricao = "Novo" }, new() { Id = 7, Descricao = "Usado" }
+        ]);
+        _generos.Setup(r => r.ListarAsync()).ReturnsAsync([
+            new() { Id = 3, Nome = "RPG" }, new() { Id = 4, Nome = "Aventura" }
+        ]);
+        _vinculos.Setup(r => r.ListarPorJogosAsync(
+            It.Is<List<int>>(ids => ids.Order().SequenceEqual(new[] { 10, 11 })))).ReturnsAsync([
+            new() { IdJogo = 10, IdGenero = 4 }, new() { IdJogo = 11, IdGenero = 3 }
+        ]);
+
+        var (jogos, total) = await _servico.ListarAsync(pagina: 2, tamanhoPagina: 2);
+
+        Assert.Equal(9, total);
+        Assert.Collection(jogos,
+            primeiro =>
+            {
+                Assert.Equal(11, primeiro.Jogo.Id);
+                Assert.Equal("SNES", primeiro.NomePlataforma);
+                Assert.Equal("Usado", primeiro.DescricaoCondicao);
+                Assert.Equal("RPG", Assert.Single(primeiro.Generos).Nome);
+            },
+            segundo =>
+            {
+                Assert.Equal(10, segundo.Jogo.Id);
+                Assert.Equal("Mega Drive", segundo.NomePlataforma);
+                Assert.Equal("Novo", segundo.DescricaoCondicao);
+                Assert.Equal("Aventura", Assert.Single(segundo.Generos).Nome);
+            });
+    }
 }
