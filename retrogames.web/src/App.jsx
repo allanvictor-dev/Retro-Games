@@ -4,6 +4,7 @@ import RotaProtegida from './components/RotaProtegida.jsx'
 import Layout from './components/Layout.jsx'
 import Catalogo from './pages/Catalogo/Catalogo.jsx'
 import DetalheJogo from './pages/Catalogo/DetalheJogo.jsx'
+import Cadastro from './pages/Cadastro/Cadastro.jsx'
 import Login from './pages/Login/Login.jsx'
 import NaoEncontrada from './pages/NaoEncontrada.jsx'
 
@@ -14,6 +15,7 @@ export default function App() {
         <Route index element={<Catalogo />} />
         <Route path="jogos/:id" element={<DetalheJogo />} />
         <Route path="login" element={<Login />} />
+        <Route path="cadastro" element={<Cadastro />} />
         <Route element={<RotaProtegida />}>
           <Route path="admin/jogos" element={<h1>Gerenciamento de jogos</h1>} />
           <Route path="admin/plataformas" element={<Plataformas />} />
