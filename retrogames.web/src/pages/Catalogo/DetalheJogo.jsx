@@ -5,8 +5,12 @@ import { obterMensagemErro } from '../../api/erros.js'
 import { formatarPreco } from '../../lib/formato.js'
 import { Carregando, MensagemErro } from '../../components/MensagensEstado.jsx'
 
+import { useCarrinho } from '../../hooks/useCarrinho.js'
+import { QUANTIDADE_MAXIMA } from '../../lib/carrinho.js'
+
 export default function DetalheJogo() {
   const { id } = useParams()
+  const { itens, adicionar } = useCarrinho()
   const [jogo, setJogo] = useState(null)
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState('')
@@ -22,6 +26,9 @@ export default function DetalheJogo() {
       .finally(() => { if (ativo) setCarregando(false) })
     return () => { ativo = false }
   }, [id, tentativa])
+
+  const quantidade = itens.find(item => item.idJogo === jogo?.id)?.quantidade || 0
+  const esgotado = jogo && (!(jogo.estoque > 0) || jogo.ativo === false)
 
   return (
     <>
@@ -41,6 +48,12 @@ export default function DetalheJogo() {
             <p className={jogo.estoque > 0 ? 'text-success' : 'text-danger'}>
               {jogo.estoque > 0 ? `Estoque: ${jogo.estoque}` : 'Sem estoque'}
             </p>
+            <button type="button" className="btn btn-primary"
+              disabled={esgotado || quantidade >= QUANTIDADE_MAXIMA}
+              onClick={() => adicionar(jogo)}>
+              {esgotado ? 'Esgotado' : quantidade >= QUANTIDADE_MAXIMA ? 'Limite de 10 unidades' : 'Adicionar ao carrinho'}
+            </button>
+            <p className="mt-2 mb-0" aria-live="polite">No carrinho: {quantidade}</p>
           </div>
         </article>
       )}
