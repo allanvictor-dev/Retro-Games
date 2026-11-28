@@ -269,4 +269,19 @@ public class GeneroServiceTests
         _generoRepoMock.Verify(r => r.PossuiJogosAsync(It.IsAny<int>()), Times.Never);
         _generoRepoMock.Verify(r => r.ExcluirAsync(It.IsAny<int>()), Times.Never);
     }
+
+    [Fact]
+    public async Task ListarAsync_RetornaGenerosDoRepositorio()
+    {
+        List<Genero> registros = [
+            new() { Id = 7, Nome = "RPG" },
+            new() { Id = 2, Nome = "Aventura" }
+        ];
+        _generoRepoMock.Setup(r => r.ListarAsync()).ReturnsAsync(registros);
+
+        var resultado = await _service.ListarAsync();
+
+        Assert.Equal(registros.Select(x => (x.Id, x.Nome)), resultado.Select(x => (x.Id, x.Nome)));
+        _generoRepoMock.Verify(r => r.ListarAsync(), Times.Once);
+    }
 }
