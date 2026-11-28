@@ -89,6 +89,21 @@ public class UsuarioRepository : RepositoryBase, IUsuarioRepository
         return usuarios;
     }
 
+    public async Task<bool> ExisteComEmailAsync(string email)
+    {
+        const string sql = """
+            SELECT COUNT(*)
+            FROM tb_usuario
+            WHERE ds_email = @email
+            """;
+
+        await using var conexao = await AbrirConexaoAsync();
+        await using var comando = CriarComando(conexao, sql);
+        AdicionarParametro(comando, "@email", email);
+
+        return Convert.ToInt64(await comando.ExecuteScalarAsync()) > 0;
+    }
+
     public async Task<bool> ExisteAdministradorAsync()
     {
         const string sql = """
