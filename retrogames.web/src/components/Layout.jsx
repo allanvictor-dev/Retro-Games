@@ -1,9 +1,12 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAutenticacao } from '../hooks/useAutenticacao.js'
 
+import { useCarrinho } from '../hooks/useCarrinho.js'
+
 export default function Layout() {
   const { usuario, carregando, estaAutenticado, ehAdministrador, sair } = useAutenticacao()
   const navigate = useNavigate()
+  const { quantidadeTotal } = useCarrinho()
 
   async function encerrarSessao() {
     try {
@@ -27,6 +30,7 @@ export default function Layout() {
           <div className="collapse navbar-collapse" id="menuPrincipal">
             <div className="navbar-nav">
               <NavLink className="nav-link" to="/">Catálogo</NavLink>
+              <NavLink className="nav-link" to="/carrinho">Carrinho (<span aria-live="polite">{quantidadeTotal}</span>)</NavLink>
               {ehAdministrador && (
                 <>
                   <NavLink className="nav-link" to="/admin/jogos">Administração</NavLink>

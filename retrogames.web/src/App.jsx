@@ -1,4 +1,5 @@
 import { Route, Routes } from 'react-router-dom'
+import Carrinho from './pages/Carrinho/Carrinho.jsx'
 import FormularioJogo from './pages/Admin/FormularioJogo.jsx'
 import Generos from './pages/Admin/Generos.jsx'
 import Jogos from './pages/Admin/Jogos.jsx'
@@ -20,6 +21,11 @@ export default function App() {
         <Route path="jogos/:id" element={<DetalheJogo />} />
         <Route path="login" element={<Login />} />
         <Route path="cadastro" element={<Cadastro />} />
+
+        <Route element={<RotaProtegida somenteAdministrador={false} />}>
+          <Route path="carrinho" element={<Carrinho />} />
+        </Route>
+
         <Route element={<RotaProtegida />}>
           <Route path="admin/jogos" element={<Jogos />} />
           <Route path="admin/jogos/novo" element={<FormularioJogo />} />
@@ -28,6 +34,7 @@ export default function App() {
           <Route path="admin/generos" element={<Generos />} />
           <Route path="admin/pedidos" element={<Pedidos />} />
         </Route>
+
         <Route path="*" element={<NaoEncontrada />} />
       </Route>
     </Routes>
