@@ -28,3 +28,7 @@ A solução e os componentes serão construídos conforme a especificação téc
 ## Configuração
 
 As credenciais e configurações locais ficam em `.env`, que não deve ser versionado. O repositório conterá apenas o modelo `.env.example`, sem senhas reais.
+
+## Módulo de Compras
+
+Para preparar um banco novo, execute os scripts de 001 a 015 em ordem numérica. O cadastro de clientes, a finalização da compra, as consultas de pedidos e a gestão de situações e gêneros estão descritos na [especificação do Módulo de Compras](docs/modulo-compras.md).
