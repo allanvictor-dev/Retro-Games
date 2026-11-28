@@ -1,5 +1,6 @@
 import { Route, Routes } from 'react-router-dom'
 import FormularioJogo from './pages/Admin/FormularioJogo.jsx'
+import Generos from './pages/Admin/Generos.jsx'
 import Jogos from './pages/Admin/Jogos.jsx'
 import Plataformas from './pages/Admin/Plataformas.jsx'
 import RotaProtegida from './components/RotaProtegida.jsx'
@@ -23,6 +24,7 @@ export default function App() {
           <Route path="admin/jogos/novo" element={<FormularioJogo />} />
           <Route path="admin/jogos/:id/editar" element={<FormularioJogo />} />
           <Route path="admin/plataformas" element={<Plataformas />} />
+          <Route path="admin/generos" element={<Generos />} />
         </Route>
         <Route path="*" element={<NaoEncontrada />} />
       </Route>
