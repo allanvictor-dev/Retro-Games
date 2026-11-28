@@ -13,4 +13,21 @@ public static class GeneroMapper
             Nome = entidade.Nome
         };
     }
+
+    public static Genero ParaModel(this InserirGeneroRequestApiModel request)
+    {
+        return new Genero
+        {
+            Nome = request.Nome
+        };
+    }
+
+    public static Genero ParaModel(this AlterarGeneroRequestApiModel request, int id)
+    {
+        return new Genero
+        {
+            Id = id,
+            Nome = request.Nome
+        };
+    }
 }
