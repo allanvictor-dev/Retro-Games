@@ -31,6 +31,9 @@ export default function Layout() {
             <div className="navbar-nav">
               <NavLink className="nav-link" to="/">Catálogo</NavLink>
               <NavLink className="nav-link" to="/carrinho">Carrinho (<span aria-live="polite">{quantidadeTotal}</span>)</NavLink>
+              {estaAutenticado && !ehAdministrador && (
+                <NavLink className="nav-link" to="/meus-pedidos">Meus pedidos</NavLink>
+              )}
               {ehAdministrador && (
                 <>
                   <NavLink className="nav-link" to="/admin/jogos">Administração</NavLink>
