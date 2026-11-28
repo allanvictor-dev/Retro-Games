@@ -41,4 +41,21 @@ public static class PedidoMapper
             Itens = detalhe.Itens.Select(i => i.ParaResponse()).ToList()
         };
     }
+
+    public static ListarPedidoResponseApiModel ParaListarResponse(this PedidoDetalheServiceModel detalhe)
+    {
+        var pedido = detalhe.Pedido;
+        return new ListarPedidoResponseApiModel
+        {
+            Id = pedido.Id,
+            Data = pedido.Data,
+            ValorTotal = pedido.ValorTotal,
+            IdSituacaoPedido = pedido.IdSituacaoPedido,
+            DescricaoSituacao = detalhe.DescricaoSituacao,
+            IdUsuario = pedido.IdUsuario,
+            NomeUsuario = detalhe.NomeUsuario,
+            EmailUsuario = detalhe.EmailUsuario,
+            Itens = detalhe.Itens.Select(i => i.ParaResponse()).ToList()
+        };
+    }
 }
