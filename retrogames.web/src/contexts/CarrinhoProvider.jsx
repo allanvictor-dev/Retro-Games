@@ -1,19 +1,29 @@
 import { useEffect, useState } from 'react'
+import { useAutenticacao } from '../hooks/useAutenticacao.js'
 import { carrinhoContext } from './carrinhoContext.js'
 import { adicionarItem, carregarItens } from '../lib/carrinho.js'
 
 export default function CarrinhoProvider({ children }) {
-  const [itens, setItens] = useState(carregarItens)
+  const { usuario, carregando } = useAutenticacao()
+  const chave = !carregando && usuario?.id != null ? 'retrogames.carrinho.' + usuario.id : null
+
+  return <CarrinhoDaConta key={chave || 'visitante'} chave={chave}>{children}</CarrinhoDaConta>
+}
+
+function CarrinhoDaConta({ children, chave }) {
+  const [itens, setItens] = useState(() => carregarItens(chave))
 
   useEffect(() => {
+    if (!chave) return
     try {
-      localStorage.setItem('retrogames.carrinho', JSON.stringify(itens))
+      localStorage.setItem(chave, JSON.stringify(itens))
     } catch (erro) {
       console.error('Não foi possível salvar o carrinho.', erro)
     }
-  }, [itens])
+  }, [chave, itens])
 
   function adicionar(jogo) {
+    if (!chave) return
     setItens(anteriores => adicionarItem(anteriores, jogo))
   }
 
