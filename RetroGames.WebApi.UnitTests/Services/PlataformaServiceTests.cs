@@ -106,4 +106,51 @@ public class PlataformaServiceTests
         Assert.Equal("Mega Drive", resultado.Nome);
         _plataformaRepositoryMock.Verify(r => r.InserirAsync(plataforma), Times.Once);
     }
+
+    [Fact]
+    public async Task AlterarAsync_MantendoProprioNome_AlteraComSucesso()
+    {
+        // Arrange
+        var plataformaExistente = new Plataforma { Id = 1, Nome = "PlayStation" };
+        var plataformaAlterada = new Plataforma { Id = 1, Nome = "PlayStation" };
+
+        _plataformaRepositoryMock
+            .Setup(r => r.BuscarPorIdAsync(1))
+            .ReturnsAsync(plataformaExistente);
+
+        _plataformaRepositoryMock
+            .Setup(r => r.ExisteComNomeAsync("PlayStation", 1))
+            .ReturnsAsync(false);
+
+        // Act
+        await _servico.AlterarAsync(plataformaAlterada);
+
+        // Assert
+        _plataformaRepositoryMock.Verify(r => r.ExisteComNomeAsync("PlayStation", 1), Times.Once);
+        _plataformaRepositoryMock.Verify(r => r.AlterarAsync(plataformaAlterada), Times.Once);
+    }
+
+    [Fact]
+    public async Task ExcluirAsync_PlataformaAssociadaAJogos_LancaBusinessRuleException()
+    {
+        // Arrange
+        const int idPlataforma = 1;
+        var plataforma = new Plataforma { Id = idPlataforma, Nome = "Nintendo 64" };
+
+        _plataformaRepositoryMock
+            .Setup(r => r.BuscarPorIdAsync(idPlataforma))
+            .ReturnsAsync(plataforma);
+
+        _plataformaRepositoryMock
+            .Setup(r => r.PossuiJogosAsync(idPlataforma))
+            .ReturnsAsync(true);
+
+        // Act
+        var excecao = await Assert.ThrowsAsync<BusinessRuleException>(
+            () => _servico.ExcluirAsync(idPlataforma));
+
+        // Assert
+        Assert.Equal(BusinessErrors.PlataformaPossuiJogos, excecao.Erro);
+        _plataformaRepositoryMock.Verify(r => r.ExcluirAsync(It.IsAny<int>()), Times.Never);
+    }
 }
