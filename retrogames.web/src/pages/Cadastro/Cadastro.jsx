@@ -80,7 +80,7 @@ export default function Cadastro() {
               aria-invalid={errosCampos.nome ? 'true' : undefined}
               aria-describedby={errosCampos.nome ? 'nome-erro' : undefined}
               value={nome} onChange={evento => setNome(evento.target.value)} />
-            {errosCampos.nome && <div id="nome-erro" className="invalid-feedback">{errosCampos.nome}</div>}
+            {errosCampos.nome && <div id="nome-erro" className="invalid-feedback text-danger-emphasis">{errosCampos.nome}</div>}
           </div>
           <div className="mb-3">
             <label htmlFor="email" className="form-label">E-mail</label>
@@ -89,7 +89,7 @@ export default function Cadastro() {
               aria-invalid={errosCampos.email ? 'true' : undefined}
               aria-describedby={errosCampos.email ? 'email-erro' : undefined}
               value={email} onChange={evento => setEmail(evento.target.value)} />
-            {errosCampos.email && <div id="email-erro" className="invalid-feedback">{errosCampos.email}</div>}
+            {errosCampos.email && <div id="email-erro" className="invalid-feedback text-danger-emphasis">{errosCampos.email}</div>}
           </div>
           <div className="mb-3">
             <label htmlFor="senha" className="form-label">Senha</label>
@@ -99,7 +99,7 @@ export default function Cadastro() {
               aria-describedby={errosCampos.senha ? 'senha-ajuda senha-erro' : 'senha-ajuda'}
               value={senha} onChange={evento => setSenha(evento.target.value)} />
             <div id="senha-ajuda" className="form-text">Mínimo de 6 caracteres.</div>
-            {errosCampos.senha && <div id="senha-erro" className="invalid-feedback">{errosCampos.senha}</div>}
+            {errosCampos.senha && <div id="senha-erro" className="invalid-feedback text-danger-emphasis">{errosCampos.senha}</div>}
           </div>
           <button type="submit" className="btn btn-primary w-100" disabled={enviando}>
             {enviando ? 'Criando conta...' : 'Criar conta'}
