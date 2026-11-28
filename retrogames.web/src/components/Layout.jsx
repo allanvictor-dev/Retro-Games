@@ -28,7 +28,10 @@ export default function Layout() {
             <div className="navbar-nav">
               <NavLink className="nav-link" to="/">Catálogo</NavLink>
               {ehAdministrador && (
-                <NavLink className="nav-link" to="/admin/jogos">Administração</NavLink>
+                <>
+                  <NavLink className="nav-link" to="/admin/jogos">Administração</NavLink>
+                  <NavLink className="nav-link" to="/admin/plataformas">Plataformas</NavLink>
+                </>
               )}
             </div>
             {/* Enquanto a sessão é consultada, não se sabe se mostra Entrar ou Sair. */}
