@@ -151,6 +151,39 @@ public class JogoRepository : RepositoryBase, IJogoRepository
         return null;
     }
 
+    public async Task<List<Jogo>> ListarPorIdsAsync(List<int> ids)
+    {
+        var jogos = new List<Jogo>();
+
+        if (ids.Count == 0)
+            return jogos;
+
+        var nomesParametros = ids.Select((_, i) => $"@id{i}");
+
+        string sql = $"""
+            SELECT co_seq_jogo, no_jogo, ds_jogo,
+                   nu_ano_lancamento, vl_preco, qt_estoque,
+                   st_ativo, dt_cadastro, co_plataforma,
+                   co_condicao_jogo
+            FROM tb_jogo
+            WHERE co_seq_jogo IN ({string.Join(", ", nomesParametros)})
+            ORDER BY co_seq_jogo
+            """;
+
+        await using var conexao = await AbrirConexaoAsync();
+        await using var comando = CriarComando(conexao, sql);
+
+        for (int i = 0; i < ids.Count; i++)
+            AdicionarParametro(comando, $"@id{i}", ids[i]);
+
+        await using var leitor = await comando.ExecuteReaderAsync();
+
+        while (await leitor.ReadAsync())
+            jogos.Add(LerJogo(leitor));
+
+        return jogos;
+    }
+
     public async Task<int> InserirAsync(Jogo jogo)
     {
         const string sql = """
@@ -194,6 +227,23 @@ public class JogoRepository : RepositoryBase, IJogoRepository
 
         PreencherDados(comando, jogo);
         AdicionarParametro(comando, "@id", jogo.Id);
+
+        await ExecutarGravacaoAsync(comando);
+    }
+
+    public async Task BaixarEstoqueAsync(int idJogo, int quantidade)
+    {
+        const string sql = """
+            UPDATE tb_jogo
+            SET qt_estoque = qt_estoque - @quantidade
+            WHERE co_seq_jogo = @id
+            """;
+
+        await using var conexao = await AbrirConexaoAsync();
+        await using var comando = CriarComando(conexao, sql);
+
+        AdicionarParametro(comando, "@id", idJogo);
+        AdicionarParametro(comando, "@quantidade", quantidade);
 
         await ExecutarGravacaoAsync(comando);
     }
