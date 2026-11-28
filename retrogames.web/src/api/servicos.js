@@ -65,6 +65,16 @@ export const generoApi = {
     const resposta = await api.get('/Genero')
     return resposta.data.data
   },
+  async inserir(dados) {
+    const resposta = await api.post('/Genero', dados)
+    return resposta.data.data
+  },
+  async alterar(id, dados) {
+    await api.put('/Genero/' + id, dados)
+  },
+  async excluir(id) {
+    await api.delete('/Genero/' + id)
+  },
 }
 
 export const condicaoJogoApi = {
