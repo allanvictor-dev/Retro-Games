@@ -101,7 +101,7 @@ Com o MySQL em execução, crie o banco e utilize uma conta local com permissõe
 CREATE DATABASE retrogames CHARACTER SET utf8mb4;
 ```
 
-Execute os scripts da pasta [database/scripts](database/scripts) em ordem numérica, de 001 a 011. Em Bash, a partir da raiz do projeto:
+Execute os scripts da pasta [database/scripts](database/scripts) em ordem numérica, de 001 a 015. Em Bash, a partir da raiz do projeto:
 
 ```bash
 for arquivo in database/scripts/*.sql; do
@@ -156,6 +156,8 @@ npm run dev
 Mantenha o MySQL e os dois servidores em execução.
 
 ## API REST
+
+O cadastro de clientes, a finalização de compras, as consultas de pedidos e a gestão de situações e gêneros estão descritos na [especificação do Módulo de Compras](docs/modulo-compras.md).
 
 Principais recursos disponíveis:
 
