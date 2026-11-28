@@ -83,3 +83,21 @@ export const condicaoJogoApi = {
     return resposta.data.data
   },
 }
+
+export const situacaoPedidoApi = {
+  async listar() {
+    const resposta = await api.get('/SituacaoPedido')
+    return resposta.data.data
+  },
+}
+
+export const pedidoApi = {
+  async listar(idSituacao) {
+    const params = idSituacao ? { idSituacao } : {}
+    const resposta = await api.get('/Pedido', { params })
+    return resposta.data.data
+  },
+  async alterarSituacao(id, idSituacaoPedido) {
+    await api.put('/Pedido/' + id + '/situacao', { idSituacaoPedido })
+  },
+}
