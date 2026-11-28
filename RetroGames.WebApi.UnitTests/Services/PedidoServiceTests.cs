@@ -97,4 +97,32 @@ public class PedidoServiceTests
         _itens.Verify(r => r.InserirAsync(It.IsAny<ItemPedido>()), Times.Never);
         _jogos.Verify(r => r.BaixarEstoqueAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
     }
+
+    [Fact]
+    public async Task AlterarSituacaoAsync_SituacaoInexistente_RejeitaAlteracao()
+    {
+        _pedidos.Setup(r => r.BuscarPorIdAsync(20)).ReturnsAsync(new Pedido { Id = 20 });
+        _situacoes.Setup(r => r.BuscarPorIdAsync(99)).ReturnsAsync((SituacaoPedido?)null);
+
+        var erro = await Assert.ThrowsAsync<BusinessRuleException>(() => _servico.AlterarSituacaoAsync(20, 99));
+
+        Assert.Equal(BusinessErrors.SituacaoNaoEncontrada, erro.Erro);
+        _situacoes.Verify(r => r.BuscarPorIdAsync(99), Times.Once);
+        _pedidos.Verify(r => r.AtualizarSituacaoAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task AlterarSituacaoAsync_SituacaoExistente_AtualizaPedido()
+    {
+        _pedidos.Setup(r => r.BuscarPorIdAsync(20)).ReturnsAsync(new Pedido { Id = 20 });
+        _situacoes.Setup(r => r.BuscarPorIdAsync(SituacaoPedidoIds.Pago))
+            .ReturnsAsync(new SituacaoPedido { Id = SituacaoPedidoIds.Pago });
+
+        await _servico.AlterarSituacaoAsync(20, SituacaoPedidoIds.Pago);
+
+        _pedidos.Verify(r => r.BuscarPorIdAsync(20), Times.Once);
+        _situacoes.Verify(r => r.BuscarPorIdAsync(SituacaoPedidoIds.Pago), Times.Once);
+        _pedidos.Verify(r => r.AtualizarSituacaoAsync(20, SituacaoPedidoIds.Pago), Times.Once);
+        _pedidos.VerifyNoOtherCalls();
+    }
 }
