@@ -6,6 +6,11 @@ export const autenticacaoApi = {
     return resposta.data.data
   },
 
+  async cadastrar(nome, email, senha) {
+    const resposta = await api.post('/Autenticacao/cadastrar', { nome, email, senha })
+    return resposta.data.data
+  },
+
   async sair() {
     await api.post('/Autenticacao/logout')
   },

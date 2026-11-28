@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Navigate, useLocation } from 'react-router-dom'
+import { Link, Navigate, useLocation } from 'react-router-dom'
 import { obterMensagemErro } from '../../api/erros.js'
 import { Carregando } from '../../components/MensagensEstado.jsx'
 import { useAutenticacao } from '../../hooks/useAutenticacao.js'
@@ -63,6 +63,9 @@ export default function Login() {
             {enviando ? 'Entrando...' : 'Entrar'}
           </button>
         </form>
+        <p className="mt-3 text-center">
+          Não tem conta? <Link to="/cadastro">Criar conta</Link>
+        </p>
       </div>
     </div>
   )
