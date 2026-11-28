@@ -36,8 +36,10 @@ export default function Layout() {
               <div className="navbar-nav ms-lg-auto align-items-lg-center">
                 {estaAutenticado ? (
                   <>
-                    <span className="navbar-text me-lg-3">{usuario.nome}</span>
-                    <button type="button" className="btn btn-outline-light btn-sm my-2 my-lg-0"
+                    <span className="navbar-text text-white text-truncate me-lg-3"
+                      style={{ maxWidth: '15rem' }} title={usuario.nome}>{usuario.nome}</span>
+                    <button type="button"
+                      className="btn btn-outline-light btn-sm my-2 my-lg-0 align-self-start align-self-lg-auto"
                       onClick={encerrarSessao}>Sair</button>
                   </>
                 ) : (
